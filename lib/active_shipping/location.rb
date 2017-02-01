@@ -39,11 +39,8 @@ module ActiveShipping #:nodoc:
     alias_method :company, :company_name
 
     def initialize(options = {})
-      @country = if options[:country].nil? || options[:country].is_a?(ActiveUtils::Country)
-        options[:country]
-      else
-        ActiveUtils::Country.find(options[:country])
-      end
+      @country = coerce_to_country(options[:country]) \
+        unless options[:country].nil?
 
       @postal_code = options[:postal_code] || options[:postal] || options[:zip]
       @province = options[:province] || options[:state] || options[:territory] || options[:region]
@@ -160,6 +157,14 @@ module ActiveShipping #:nodoc:
 
     def ==(other)
       to_hash == other.to_hash
+    end
+
+    private
+
+    def coerce_to_country(value)
+      return value if value.is_a?(ActiveUtils::Country)
+
+      ActiveUtils::Country.find(value)
     end
   end
 end

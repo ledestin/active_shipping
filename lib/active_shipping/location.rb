@@ -39,10 +39,12 @@ module ActiveShipping #:nodoc:
     alias_method :company, :company_name
 
     def initialize(options = {})
-      @country = if options[:country].nil? || options[:country].is_a?(ActiveUtils::Country)
-        options[:country]
-      else
-        ActiveUtils::Country.find(options[:country])
+      unless options[:country].nil?
+        @country = if options[:country].is_a?(ActiveUtils::Country)
+          options[:country]
+        else
+          ActiveUtils::Country.find(options[:country])
+        end
       end
 
       @postal_code = options[:postal_code] || options[:postal] || options[:zip]
